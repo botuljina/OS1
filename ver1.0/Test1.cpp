@@ -1,19 +1,20 @@
-#include "Timer.h"
 #include "thread.h"
+#include "SEMAPHOR.H"
 #include <iostream.h>
 #include <stdio.h>
 
 extern int syncPrintf (const char* format, ... );
 
-const int n = 50;
 
 void tick() {}
+
+Semaphore sleep1(0);
 
 class TestThread : public Thread
 {
 public:
-
-	TestThread(int id): Thread(4096, 1), myID(id) {};
+	Semaphore sleep2;
+	TestThread(int id): Thread(4096, 2), myID(id), sleep2(0) {};
 	~TestThread()
 	{
 		waitToComplete();
@@ -27,7 +28,7 @@ protected:
 class WaitThread: public Thread
 {
 public:
-	WaitThread(TestThread *t1, TestThread *t2): Thread(4096, 1)
+	WaitThread(TestThread *t1, TestThread *t2): Thread()
 	{
 		t1_ = t1;
 		t2_ = t2;
@@ -53,15 +54,10 @@ private:
 
 void TestThread::run()
 {
+	syncPrintf("Thread %d adresa:%p: loop1 starts\n", getId(), this);
 
-	syncPrintf("Thread %d adresa: %p: loop1 starts\n", getId(), this);
-
-	for(long i=0;i<8000;i++) {
-
-		for (long j = 0; j < 32000; j++);
-	}
-	syncPrintf("FOR VRTESKA\n");
-	//Thread::sleep(myID*20);
+	//for(long i=0;i<8000;i++) {	for (long j = 0; j < 32000; j++);}
+	sleep2.wait(20);
 
 	syncPrintf("Thread %d: loop1 ends, dispatch\n",getId());
 
@@ -69,8 +65,8 @@ void TestThread::run()
 
 	syncPrintf("Thread %d: loop2 starts\n", getId());
 
-	for (int k = 0; k < 8000; k++) { for (long j = 0; j < 32000; j++); }
-	//Thread::sleep(myID*20);
+	//for (int k = 0; k < 8000; k++) { for (long j = 0; j < 32000; j++); }
+	sleep2.wait(20);
 
 	syncPrintf("Thread %d: loop2 ends\n", getId());
 
@@ -79,37 +75,47 @@ void TestThread::run()
 int userMain(int argc, char** argv)
 {
 	syncPrintf("User main starts\n");
-	//TestThread *t = new TestThread(1);
-	//t->start();
 
-	TestThread *t[n];
-	for(int i = 0; i < n; i++) {
-		t[i] = new TestThread(i);
-		syncPrintf("Thread %d adresa: %ld:\n", t[i]->getId(), t[i]);
-		syncPrintf("Thread: %d made\n",i);
-	}
-	for(int j = 0; j < n; j++) {
-		t[j]->start();
-		//syncPrintf("Thread: %d started\n",j);
-	}
+	TestThread *t1 = new TestThread(1),
+			*t2 = new TestThread(2),
+			*t3 = new TestThread(3),
+			*t4 = new TestThread(4),
+				*t5 = new TestThread(5),
+				*t6 = new TestThread(6);
 
+	WaitThread *w = new WaitThread(t1,t2);
+	WaitThread *w1 = new WaitThread(t5,t6);
+
+
+	t1->start();
+	t2->start();
+	t3->start();
+	t4->start();
+	t5->start();
+	t6->start();
+	w->start();
+	w1->start();
 
 	for (long k=0; k<5; k++) {
-		for(long i=0;i<8000;i++) {
-			for (long j = 0; j < 32000; j++);
-
-		}
-		//Thread::sleep(10);
+		//for(long i=0;i<8000;i++) { for (long j = 0; j < 32000; j++);}
+		sleep1.wait(20);
 
 		syncPrintf("Usermain %d running!\n", Thread::getRunningId());
-		//Thread *m = Thread::getThreadById(3);
-		//syncPrintf("%p\n", m);
-		Timer::dispatch();
-	}//
-
-	for(int l = 0; l < n; l++) {
-		delete t[l];
+		Thread *t = Thread::getThreadById(3);
+		syncPrintf("%p\n", t);
+		dispatch();
 	}
+
+	delete w;
+	delete w1;
+	delete t1;
+	delete t2;
+	delete t3;
+	delete t4;
+	delete t5;
+	delete t6;
+
 	syncPrintf("User main ends\n");
 	return 0;
 }
+

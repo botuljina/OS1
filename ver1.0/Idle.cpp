@@ -17,7 +17,7 @@ void Idle::start()
 #endif
 	threadPCB->myPcbState = ready;
 	threadPCB->createStack();
-	cout<<"steka Idle treda je: "<< threadPCB->stack <<"\n";
+	//cout<<"steka Idle treda je: "<< threadPCB->stack <<"\n";
 #ifndef BCC_BLOCK_IGNORE
 	unlock();
 #endif

@@ -28,10 +28,13 @@ public:
 
 	void createStack();
 
+	int SemRetVal;
 private:
 	friend Thread;
 	friend Idle;
 	friend Timer;
+	friend timeQueue;
+	friend PcbSem;
 //atribute sam inicijalizovao u pozivu metode createStack()
 	StackSize stackSize;
 	unsigned* stack;

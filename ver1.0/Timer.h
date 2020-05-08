@@ -1,6 +1,6 @@
 #ifndef HFILES_TIMER_H_
 #define HFILES_TIMER_H_
-
+#include "semQue.h"
 //makroi koji obezbedjuju atomicnost (koristimo pushf i popf
 //zbog gnezdenja poziva vise atomicnih f-ja na steku da ne bi
 //doslo do stvaranja "otkljucanih" delova koda
@@ -29,12 +29,14 @@ public:
 	virtual ~Timer();
 	static unsigned long globalthreadID;
 	static queue* globalQueueForGettingIds;
+    static semQueue* mySemQueue;
 
 private:
 	friend PCB;
 	friend Thread;
 	friend Idle;
 	friend queue;
+	friend PcbSem;
 
 	static Thread* startingThread;
 	static Idle* idleThread;

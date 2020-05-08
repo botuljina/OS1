@@ -12,7 +12,7 @@
 #include "Pcb.h"
 #include "Idle.h"
 #include "SCHEDULE.H"
-
+#include "sPrintf.h"
 class queue;
 class PCB;
 class Idle;
@@ -21,6 +21,8 @@ class Thread;
 unsigned oldTimerOFF = 0;
 unsigned oldTimerSEG = 0;
 
+
+semQueue* Timer::mySemQueue = 0;
 queue* Timer::globalQueueForGettingIds=new queue();
 Thread* Timer::startingThread= 0;
 Idle* Timer::idleThread = 0;
@@ -28,6 +30,7 @@ volatile PCB* Timer::running=0;
 volatile unsigned Timer::dispatched=0;
 unsigned long Timer::globalthreadID=0;
 void interrupt (*Timer::oldRoutine)(...) = 0;
+
 
 //---------------------------------------------------------
 void Timer::SetAllPrefiniedAtrributes()
@@ -65,7 +68,7 @@ void Timer::dispatch()
 #ifndef BCC_BLOCK_IGNORE
 	lock();
 #endif
-	cout<<"Krenuo nevaljali dispatch"<<endl;
+	//syncPrintf("Krenuo nevaljali dispatch");
 	dispatched = 1;
 	timerRoutine();
 	dispatched = 0;
@@ -84,10 +87,12 @@ void interrupt Timer::timerRoutine(...)
 {
 //timerRoutine ima 3 toka kontrola
 //1) ako nije eksplictni poziv
-	if(dispatched!=0)
+	if(!dispatched)
 	{
 		tick();
 		(*oldRoutine)();
+		//syncPrintf("tick\n");
+		mySemQueue->tickAllSemaphores();
 	}
 
 	if (!dispatched && running->PcbTimeSlice != 0)
@@ -98,7 +103,10 @@ void interrupt Timer::timerRoutine(...)
 	dispatched = 0;
 
 	if(running->myPcbState == ready && (PCB*)running != idleThread->getIdlePCB())
-			Scheduler::put((PCB*)running);
+	{
+		Scheduler::put((PCB*)running);
+	}
+
 
 	newThread = Scheduler::get();
 	if (newThread == 0) newThread = idleThread->threadPCB; //ako je prazan Scheduler koristimo idle nit
@@ -131,6 +139,7 @@ void Timer::restore_system() {
 	if( (PCB*)running != startingThread->threadPCB ) return;
 #ifndef BCC_BLOCK_IGNORE
 	lock();
+
 	setvect(0x08, oldRoutine);
 #endif
 
@@ -145,7 +154,7 @@ void Timer::restore_system() {
 void Timer::wrapper() {
 	//ulaskom u wrapper, stek niti koju pokrece wrapper je prazan
 	//pokrece izvrsavanje tela niti
-	cout<<"Uspeo ulaz u wraper funkciju\n";
+	//cout<<"Uspeo ulaz u wraper funkciju\n";
 
 	running->myThread->run();
 	//nit se zavrsila

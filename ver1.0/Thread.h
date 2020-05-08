@@ -36,6 +36,7 @@ public:
 
 protected:
   friend Timer;
+  friend PcbSem;
   virtual void run() {}
 
   PCB* threadPCB;

@@ -29,7 +29,7 @@ void queue::printQueueElements()
 	qnode* temp = firstNode;
 	while(temp!=0)
 	{
-		cout<<temp->element<<"\n";
+		//syncPrintf("%d",temp->element);
 	}
 #ifndef BCC_BLOCK_IGNORE
 	unlock();

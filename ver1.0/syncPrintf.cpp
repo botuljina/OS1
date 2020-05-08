@@ -1,7 +1,4 @@
-#include <DOS.H>
-#include <STDIO.H>
-#include <STDARG.H>
-#include "timer.h"
+#include "sPrintf.h"
 
 int syncPrintf(const char *format, ...)
 {

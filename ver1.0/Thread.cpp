@@ -20,7 +20,7 @@ Thread::Thread(StackSize s, Time t)
 #ifndef BCC_BLOCK_IGNORE
 	lock();
 #endif
-	cout<<"Thread konstruktor krenuo\n";
+	//cout<<"Thread konstruktor krenuo\n";
 	//proveriti da li mi ovo radi dobar cast
 	threadPCB = new PCB(this,s,(volatile unsigned long) t);
 	assignIDtoThread();
@@ -51,7 +51,7 @@ void Thread::start()
 #endif
 	threadPCB->myPcbState = ready;
 	threadPCB->createStack();
-	cout<<"steka treda je: "<< threadPCB->stack <<"\n";
+	//cout<<"steka treda je: "<< threadPCB->stack <<"\n";
 	Scheduler::put(threadPCB);
 #ifndef BCC_BLOCK_IGNORE
 	unlock();

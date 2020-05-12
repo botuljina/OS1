@@ -1,6 +1,8 @@
 #ifndef HFILES_QUEUE_H_
 #define HFILES_QUEUE_H_
 #include "Pcb.h"
+class Thread;
+typedef unsigned long int ID;
 class PCB;
 class queue
 {
@@ -12,6 +14,7 @@ class queue
 
 	        qnode(PCB* e = 0 ): element( e ), next( 0 )
 	        { }
+
 	    };
 public:
 	friend Timer;
@@ -21,6 +24,8 @@ public:
 	PCB* get();
 	int getQueueSize();
     void printQueueElements();
+    Thread* getThreadByIdSearchQueue(ID id);
+    int getThreadByIdAndRemoveIt(ID id);
 	queue();
 	~queue();
 private:

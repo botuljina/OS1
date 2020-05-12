@@ -12,6 +12,7 @@
 #include "Pcb.h"
 #include "Idle.h"
 #include "SCHEDULE.H"
+#include "sPrintf.h"
 
 class queue;
 class PCB;
@@ -21,17 +22,18 @@ class Thread;
 unsigned oldTimerOFF = 0;
 unsigned oldTimerSEG = 0;
 
-queue* Timer::globalQueueForGettingIds=new queue();
+queue* Timer::globalQueueForGettingIds=0;
 Thread* Timer::startingThread= 0;
 Idle* Timer::idleThread = 0;
 volatile PCB* Timer::running=0;
 volatile unsigned Timer::dispatched=0;
 unsigned long Timer::globalthreadID=0;
 void interrupt (*Timer::oldRoutine)(...) = 0;
-
+int Timer::testingPhase =0;
 //---------------------------------------------------------
 void Timer::SetAllPrefiniedAtrributes()
 {
+
 	Timer::startingThread= new Thread(4096, minTimeSlice());
 	Timer::startingThread->threadPCB->myPcbState = ready;
 	Timer::running= (volatile PCB*)Timer::startingThread->threadPCB;
@@ -65,7 +67,7 @@ void Timer::dispatch()
 #ifndef BCC_BLOCK_IGNORE
 	lock();
 #endif
-	cout<<"Krenuo nevaljali dispatch"<<endl;
+	//cout<<"Krenuo nevaljali dispatch"<<endl;
 	dispatched = 1;
 	timerRoutine();
 	dispatched = 0;
@@ -82,9 +84,10 @@ static volatile PCB *newThread;
 //Funkcija: Vrsi promenu konteksta.
 void interrupt Timer::timerRoutine(...)
 {
+	//syncPrintf("NALAZI SE U TIMER ROUTINI");
 //timerRoutine ima 3 toka kontrola
 //1) ako nije eksplictni poziv
-	if(dispatched!=0)
+	if(!dispatched)
 	{
 		tick();
 		(*oldRoutine)();
@@ -133,19 +136,20 @@ void Timer::restore_system() {
 	lock();
 	setvect(0x08, oldRoutine);
 #endif
-
+	delete globalQueueForGettingIds;
+	delete startingThread;
+	delete idleThread;
 #ifndef BCC_BLOCK_IGNORE
 	unlock();
 #endif
 }
 
 //------------------------------------------------------------------------------------------
-//prepisao sam ceo metod
 //funkcija omotac virtuelne f-je run()
 void Timer::wrapper() {
 	//ulaskom u wrapper, stek niti koju pokrece wrapper je prazan
 	//pokrece izvrsavanje tela niti
-	cout<<"Uspeo ulaz u wraper funkciju\n";
+	//cout<<"Uspeo ulaz u wraper funkciju\n";
 
 	running->myThread->run();
 	//nit se zavrsila
@@ -159,10 +163,19 @@ void Timer::wrapper() {
 	PCB* temp;
 	while( running->PcbQueueForWaitingThreads->getQueueSize() > 0 )
 	{
-		temp = running->PcbQueueForWaitingThreads->get();
-		temp->myPcbState = ready;
-		Scheduler::put(temp);
+		if(temp!=0)
+		{
+			if(testingPhase)
+				syncPrintf("zavrsio se run za nit sa id-jem %d i vadim iz njenog queue-a\n",running->myThread->threadID);
+			temp = running->PcbQueueForWaitingThreads->get();
+
+			temp->myPcbState = ready;
+			Scheduler::put(temp);
+		}
+
 	}
+	if(testingPhase)
+		syncPrintf("zavrsio se run za nit sa id-jem %d i vadim iz njenog queue-a\n",running->myThread->threadID);
 	//prelazak na drugu nit, jer na steku nema povratne adrese za povratak iz wrapper-a
 	dispatch();
 }

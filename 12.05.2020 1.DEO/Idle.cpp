@@ -17,15 +17,14 @@ void Idle::start()
 #endif
 	threadPCB->myPcbState = ready;
 	threadPCB->createStack();
-	cout<<"steka Idle treda je: "<< threadPCB->stack <<"\n";
+	//cout<<"steka Idle treda je: "<< threadPCB->stack <<"\n";
 #ifndef BCC_BLOCK_IGNORE
 	unlock();
 #endif
 }
 
-Idle::Idle()
+Idle::Idle():Thread(4096,1)
 {
-	Thread(256,1);
 }
 PCB* Idle::getIdlePCB()
 {

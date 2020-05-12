@@ -1,0 +1,4 @@
+******************************************
+Ova verzija ima testirane testove: 1-5
+Ispravno sve implementirano. 
+Prva ispravna verzija pre semafora!

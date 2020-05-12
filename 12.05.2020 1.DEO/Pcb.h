@@ -32,6 +32,7 @@ private:
 	friend Thread;
 	friend Idle;
 	friend Timer;
+	friend queue;
 //atribute sam inicijalizovao u pozivu metode createStack()
 	StackSize stackSize;
 	unsigned* stack;

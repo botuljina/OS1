@@ -36,6 +36,7 @@ public:
 
 protected:
   friend Timer;
+  friend queue;
   virtual void run() {}
 
   PCB* threadPCB;

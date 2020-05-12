@@ -18,7 +18,7 @@ PCB::PCB(Thread* t,StackSize s,volatile unsigned long timeSlice)
 #ifndef BCC_BLOCK_IGNORE
 	lock();
 #endif
-	cout<<"Uso u PCB konstruktor\n";
+	//cout<<"Uso u PCB konstruktor\n";
 		myThread = t;
 
 		myPcbState = initialized;

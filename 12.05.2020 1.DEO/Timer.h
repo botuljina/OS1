@@ -36,6 +36,7 @@ private:
 	friend Idle;
 	friend queue;
 
+	static int testingPhase;
 	static Thread* startingThread;
 	static Idle* idleThread;
 	static volatile PCB* running;
@@ -45,6 +46,7 @@ private:
 	static void interrupt (*oldRoutine) (...);
 	static void interrupt timerRoutine(...);
 	static void wrapper();
+
 };
 
 #endif /* HFILES_TIMER_H_ */

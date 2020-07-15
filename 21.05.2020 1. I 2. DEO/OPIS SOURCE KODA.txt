@@ -1,4 +1,0 @@
-Ova verzija sadrzi implementiran 1. deo i dodate semafore koji rade ispravno.
-Svi testovi pusteni(1-7).
-*Testovi su sa rti boxa: 
-https://m.box.com/shared_item/https%3A%2F%2Fapp.box.com%2Fs%2F0r50je333z1qyypz0h3rm0iqb9s0d64f/browse/8374186381?fbclid=IwAR20MZcC8G3fOiOkrP3RW8GRRMv3hb_nY2fCFThghrwIFDYFcH5na-d2jzk

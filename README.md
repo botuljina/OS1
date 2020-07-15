@@ -3,9 +3,9 @@ Preemptive multitasking kernel with time sharing for x86 CPUs written in C++ and
 
 <b>Bitne ispravke u odnosu na verz 2</b>
 <li>
-	<ul>Uocena neispravnost rada semafora, tickAllSemaphores refactor 
-	<ul>Uocena greska kod deklaracije element_for_return u svim queue klasama(dodato el=0;)
-</li>
+	<ul>Uocena neispravnost rada semafora, tickAllSemaphores refactor</ul>
+	<ul>Uocena greska kod deklaracije element_for_return u svim queue klasama(dodato el=0;)</ul>
+</li><br>
 
 <i>Nacin testiranja koda</i>
 <li>

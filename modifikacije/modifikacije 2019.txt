@@ -1,0 +1,13 @@
+Modifikacija predrok 20p.
+Semafor klasi se dodeli lista vlasnika. Funkcije addowner() i removeowner(id) valjda. I sad nesto na foru signal i wait rade, akko je pozvao vlasnik, a ako ne, onda ništa. Za addowner se uzima tekuca.
+
+
+Modifikacija jun 20p
+
+U semafor se dodaju dve funkcije. Funkcija1(char) i funkcija2(). Prva propusta ili blokira uz ispis pustila sam nit _id_ ili blokirala sam nit _id_. Druga odblokira po kasnije navedenim uslovima. Char može biti r i w, u nastavku read i write. Poenta je da se koriste za zakljucavanje na foru shared and exclusive key. Kada nit pozove funkciju1, ako je pozove sa read i zauzme kljuc, mogu proci sve koje zovu sa read, a ostale koje su sa write se blokiraju. Kada *sve* izadju ove sa read mogu jedna po jedna write. Ako pozove sa write, onda može samo ona uci, sve ostale se logicno blokiraju i odblokirava se(ako je to rec) u zavisnosti od one koja je prva blokirana tj. ako je blokirana read prva, sve read, ako je write, jedna ta, pa ona posle opet gleda isto. Test se sam pisao. 10 niti se naprave kojima se funkcijom rand() dodeli r ili w i onda one zovu na pocetku svoga run-a funkcija1(running->mod) i na kraju funkcia2().
+
+Modifikacija sep 20p
+
+Napraviti konstruktor Thread(void (*f) (void*), void* param, stackSize, timeSlice). Treba da vrši f-ju f sa parametrom param i da se pokrece po kreiranju, dakle bez start().
+Javni test - globalna f-ja zbir, staticka f-ja Proizvod u sklopu Thread, obe primaju dva broja kao argumente, ispisuju rezultate.
+

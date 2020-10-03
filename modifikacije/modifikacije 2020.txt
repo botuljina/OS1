@@ -1,0 +1,26 @@
+modifikacija predrok 2020 za 20poena
+prosiriti klasu semaphore sa nestatickom funkcijom turnOnPriorities koja na tom semaforu uvodi prioritetni signal, kada je pozvana funkcija a da inace radi normalno. (samo jedan flag)
+prioritetni signal treba da se izmeni tako da uvek odblkira po ID threada, u rasutecem poretku, a ne proizvoljno (vrv ste fifo imali).
+takodje treba da se dodaju ispisi u signalu i waitu u semaphore.cpp
+signal treba da kaze koji ID ga je pozvao,
+dok wait treba da kaze koji ID ga je pozvao kao i da li ce se blokirati na tom semaforu
+Trebao je da se napise test koji ovo testira, napraviti 50 niti koje ciklicno rade sledecu stvar, sem -> wait(), zatim ispis, "usao u kriticnu sekciju", na nekom drugom (obicnom) semaforu sem2 simuliraju spavanje te niti za random vreme, a zatim zovu sem-> signal() i ispisuju "izasao iz kriticne sekcije", a semafor sem je semafor nad kojim je pozvan turnOnPriorities i ima vrednost 10 puta manju od broja niti tj 5.
+
+modifikacija jun 2020
+
+1. Da se napravi void Semaphore::pair(Thread* th1, Thread* th2);
+
+2. Da se u wait-u Semaphore klase ispise ako je nit blokirana ili ako joj je odobreno izvrsavanje, 
+	a ako je jedna uparena nit u kriticnoj sekciji, da se druga nit blokira
+
+3. Da se u signal-u Semaphore klase ispise kada i koja nit je odblokirana, 
+	a ako je uparena nit izvrsila SIGNAL, da prednost procesoru da svojoj uparenoj niti(ako je blokirana)
+	
+4. Da se pokrene 10 uporednih niti koje ispisuju kada su usle, a kada izasle iz kriticne sekcije
+
+5. Da se napravi lokalni semafor na kome ce se u kriticnoj sekciji blokirati niti
+
+modifikacija jul 2020
+
+U event ubaciti metodu reserve i ta nit reservise jedan glibalni event objekat i nit se blokira na eventu samo ako je u tom redu reservisanih dakle holder se izbaci iz konstruktora, a u toj metodi se stavljaju niti koje su je pozvale. Signal javi svim blokiranim nitima. 
+Test: 50 niti radi i one u run uradi wait na sem pa se uspavaju na nekom lokalnom sem random vreme i onda cekaju tastaturu da ih odblokira, tastatura pravi 2 signala pa treba paziti na to, moze se koristiti javni test tj delovi iz javnog testa, i treba na wait ev i signal wv da ispisuje koju nit blokira i koju signalizira

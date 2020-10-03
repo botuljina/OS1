@@ -1,0 +1,25 @@
+MODIFIKACIJA PREDROK 2018
+Thread ima svoje prijatelje, max 10
+I thread nece da se staruje ako su mu 2 prijatelja vec startovana.
+Ali zato ga prijatelj obavesti da li je zavrsio
+I treba automatski da ga startuje Ako je pokusao da se startuje pre toga.
+
+static void makeFriends(Thread* t1, Thread* t2);
+
+I nece se dodavati prijatelji nakon sto je neka nit startovana
+
+
+MODIFIKACIJA JUN 2018
+static void Makefriends(thread* t1, thread* t2); max 10
+Nit moze da sebi dodaje prijatelje, (simetricna)
+
+Void waitFriend ()
+Nit prolazi ako je value vece od 0 i ako su sve niti koje su u kriticnoj sekciji(koje su pozvale waitFriend a nisu pozvale signal) njeni prijatelji, 
+inace se blokira, cim budu ispunjeni uslovi odblokira se(ponovo se poziva waitFriend?)...
+
+Moj komentar: treba da se napravi POSEBAN signal kod za semafor, koji se uparuje sa waitFriend
+
+MODIFIKACIJA JUL 2018:
+Trebalo je promeniti funkciju klase Semaphore, tako da u konstruktoru prima 2 parametra: Semaphore(int undo, int init). Ako je undo parametar 0, semafor se ponasa klasicno. Ako je razlicit od 0, onda se vrednost semafora moze promeniti i nezavisno od wait i signal, tako sto, kada se nit zavrsava (a ne kad se brise), ponistavaju se svi efekti koje je imala na semafor, tipa ako je pozvala 3 puta wait, a nijednom signal, vrednost semafora se poveca za 3, ako je pozvala 4 puta wait i 2 puta signal, poveca se za 2, i odblokiraju se sve niti koje su bile blokirane.
+Main funkcija je sadrzala 3 tipa niti, sve 3 su imale privatne atribute Semaphore i id, a razlikovale su se u tome koliko puta su pozivale wait i signal. Imale su po jednu petlju koja se ponovi 10 puta, u kojoj su se pozivali wait i signal, izmedju kojih je bila for petlja koja je isla 10000 puta i u njoj jos jedna for petlja koja je isla do 30000. Posle te petlje bi niti odredjeni broj puta pozvale wait.
+
